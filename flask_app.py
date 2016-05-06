@@ -1,11 +1,13 @@
 
 # using https://blog.pythonanywhere.com/121/ as a start point
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, flash, abort
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
+from flask.ext.login import login_user , logout_user , current_user , login_required
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
+app.secret_key = "super secret key"
 
 SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
     username="Kramin42",
@@ -61,7 +63,7 @@ class User(db.Model):
         return False
 
     def get_id(self):
-        return unicode(self.id)
+        return str(self.id)
 
     def __repr__(self):
         return '<User %r>' % (self.username)
@@ -74,6 +76,11 @@ def index():
 #    db.session.add(comment)
 #    db.session.commit()
 #    return redirect(url_for('index'))
+
+@app.route('/delete',methods=['POST'])
+@login_required
+def delete():
+    return redirect(url_for('index'))
 
 # disabled
 # @app.route('/register' , methods=['GET','POST'])
@@ -90,7 +97,15 @@ def index():
 def login():
     if request.method == 'GET':
         return render_template('login.html')
-    return redirect(url_for('index'))
+    username = request.form['username']
+    password = request.form['password']
+    registered_user = User.query.filter_by(username=username,password=password).first()
+    if registered_user is None:
+        flash('Username or Password is invalid' , 'error')
+        return redirect(url_for('login'))
+    login_user(registered_user)
+    flash('Logged in successfully')
+    return redirect(request.args.get('next') or url_for('index'))
 
 if __name__ == '__main__':
     db.create_all()
