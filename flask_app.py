@@ -84,6 +84,10 @@ def index():
 @app.route('/delete')
 @login_required
 def delete():
+    entry = Entry.query.filter_by(id=request.args.get('id')).first()
+    db.session.delete(entry)
+    db.session.commit()
+    flash('Deleted: '+entry.topic)
     return redirect(url_for('index'))
 
 # disabled
