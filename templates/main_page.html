@@ -5,25 +5,53 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-        <title>My scratchboard page</title>
+        <style>
+            @media (min-width: 1200px) {
+                .container {
+                    width: 900px;
+                }
+            }
+        </style>
+        <title>Notebook</title>
     </head>
 
-    <body>
+    <body><div class="container">
         <nav class="navbar navbar-inverse">
-            <div class="container">
-            <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">My scratchpad</a>
-            </div>
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Notebook</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                </ul>
             </div>
         </nav>
 
-
+        <div class="container-fluid">
+            <table class="table table-striped">
+			    <thead>
+			        <tr>
+				        <th>Topic</th>
+				        <th>Last Updated</th>
+				        <th><a href="#">New Entry</a></th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			        {% for entry in entries %}
+			        <tr>
+				        <td><a href="#">{{ entry.topic }}</a></td>
+				        <td>{{ entry.timestamp }}</td>
+				        <td><a href="#">Show</a> <a href="#">Edit</a> <a href="#">Delete</a></td>
+			        </tr>
+                    {% endfor %}
+			    </tbody>
+		    </table>
+        </div>
+<!--
         <div class="container">
 
         {% for comment in comments %}
@@ -39,5 +67,5 @@
             </form>
         </div>
         </div><!-- /.container -->
-    </body>
+    </div></body>
 </html>

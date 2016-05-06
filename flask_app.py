@@ -24,10 +24,18 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(4096))
 
+class Entry(db.Model):
+    __tablename__ = "entries"
+
+    id = db.Column(db.Integer, primary_key=True)
+    topic = db.Column(db.String(4096))
+    outline = db.Column(db.String(4096))
+    timestamp = db.Column(db.DateTime())
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
-        return render_template("main_page.html", comments=Comment.query.all())
+        return render_template("main_page.html", entries=Entry.query.all())
 
     comment = Comment(content=request.form["contents"])
     db.session.add(comment)
