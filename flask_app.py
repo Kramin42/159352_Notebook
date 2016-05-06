@@ -2,7 +2,7 @@
 # using https://blog.pythonanywhere.com/121/ as a start point
 from flask import Flask, redirect, render_template, request, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager, login_required, login_user, logout_user, current_user
+from flask.ext.login import LoginManager
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -47,7 +47,7 @@ class User(db.Model):
     username = db.Column('username', db.String(20), unique=True , index=True)
     password = db.Column('password' , db.String(10))
 
-    def __init__(self , username ,password , email):
+    def __init__(self , username ,password):
         self.username = username
         self.password = password
 
@@ -75,15 +75,16 @@ def index():
 #    db.session.commit()
 #    return redirect(url_for('index'))
 
-@app.route('/register' , methods=['GET','POST'])
-def register():
-    if request.method == 'GET':
-        return render_template('register.html')
-    user = User(request.form['username'] , request.form['password'],request.form['email'])
-    db.session.add(user)
-    db.session.commit()
-    flash('User successfully registered')
-    return redirect(url_for('login'))
+# disabled
+# @app.route('/register' , methods=['GET','POST'])
+# def register():
+#     if request.method == 'GET':
+#         return render_template('register.html')
+#     user = User(request.form['username'] , request.form['password'])
+#     db.session.add(user)
+#     db.session.commit()
+#     flash('User successfully registered')
+#     return redirect(url_for('login'))
 
 @app.route('/login',methods=['GET','POST'])
 def login():
