@@ -14,7 +14,7 @@
 		        <tr>
 			        <td><a href="#">{{ entry.topic }}</a></td>
 			        <td>{{ entry.timestamp }}</td>
-			        <td><a href="#">Show</a> <a href="#">Edit</a> <a href="#">Delete</a></td>
+			        <td><a href="#">Show</a> <a href="#">Edit</a> <a href="/delete?id={{entry.id}}">Delete</a></td>
 		        </tr>
                 {% endfor %}
 		    </tbody>

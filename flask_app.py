@@ -1,6 +1,6 @@
 
 # using https://blog.pythonanywhere.com/121/ as a start point
-from flask import Flask, redirect, render_template, request, url_for, flash, abort
+from flask import Flask, redirect, render_template, request, url_for, flash, abort, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.login import login_user , logout_user , current_user , login_required
@@ -68,6 +68,10 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % (self.username)
 
+@app.before_request
+def before_request():
+    g.user = current_user
+
 @app.route("/")
 def index():
     return render_template("main_page.html", entries=Entry.query.all())
@@ -77,7 +81,7 @@ def index():
 #    db.session.commit()
 #    return redirect(url_for('index'))
 
-@app.route('/delete',methods=['POST'])
+@app.route('/delete')
 @login_required
 def delete():
     return redirect(url_for('index'))
@@ -106,6 +110,11 @@ def login():
     login_user(registered_user)
     flash('Logged in successfully')
     return redirect(request.args.get('next') or url_for('index'))
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     db.create_all()

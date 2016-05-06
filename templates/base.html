@@ -26,7 +26,12 @@
                     <li><a href="#">About</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    {% if g.user.is_authenticated%}
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
+                    {% if not g.user.is_authenticated%}
+                        <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </nav>
