@@ -2,9 +2,9 @@
 # using https://blog.pythonanywhere.com/121/ as a start point
 from flask import Flask, redirect, render_template, request, url_for, flash, abort, g
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 from flask.ext.login import LoginManager
 from flask.ext.login import login_user , logout_user , current_user , login_required
-
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.secret_key = "super secret key"
@@ -40,7 +40,11 @@ class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.String(4096))
     outline = db.Column(db.String(4096))
-    timestamp = db.Column(db.DateTime())
+    timestamp = db.Column(db.TIMESTAMP(), server_default=func.current_timestamp(), onupdate=func.current_timestamp())
+
+    def __init__(self, topic, outline):
+        self.topic = topic
+        self.outline = outline
 
 # https://blog.openshift.com/use-flask-login-to-add-user-authentication-to-your-python-application/
 class User(db.Model):
@@ -80,6 +84,30 @@ def index():
 #    db.session.add(comment)
 #    db.session.commit()
 #    return redirect(url_for('index'))
+
+@app.route('/new',methods=['GET','POST'])
+@login_required
+def new():
+    if request.method == 'GET':
+        return render_template("edit.html", topic="New Topic", outline="")
+
+    entry = Entry(request.form['topic'], request.form['outline'])
+    db.session.add(entry)
+    db.session.commit()
+    flash('Added: '+entry.topic)
+    return redirect(url_for('index'))
+
+@app.route('/edit',methods=['GET','POST'])
+@login_required
+def edit():
+    entry = Entry.query.filter_by(id=request.args.get('id')).first()
+    if request.method == 'GET':
+        return render_template("edit.html", topic=entry.topic, outline=entry.outline)
+    entry.topic = request.form['topic']
+    entry.outline = request.form['outline']
+    db.session.commit()
+    flash('Updated: '+entry.topic)
+    return redirect(url_for('index'))
 
 @app.route('/delete')
 @login_required

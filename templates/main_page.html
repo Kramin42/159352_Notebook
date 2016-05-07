@@ -6,7 +6,7 @@
 		        <tr>
 			        <th>Topic</th>
 			        <th>Last Updated</th>
-			        <th><a href="#">New Entry</a></th>
+			        <th><a href="/new">New Entry</a></th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -14,7 +14,7 @@
 		        <tr>
 			        <td><a href="#">{{ entry.topic }}</a></td>
 			        <td>{{ entry.timestamp }}</td>
-			        <td><a href="#">Show</a> <a href="#">Edit</a> <a href="/delete?id={{entry.id}}">Delete</a></td>
+			        <td><a href="/show?id={{entry.id}}">Show</a> <a href="/edit?id={{entry.id}}">Edit</a> <a href="/delete?id={{entry.id}}">Delete</a></td>
 		        </tr>
                 {% endfor %}
 		    </tbody>
