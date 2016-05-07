@@ -79,12 +79,11 @@ def before_request():
 
 @app.route('/',methods=['GET','POST'])
 def index():
-    return render_template("main_page.html", entries=Entry.query.all())
+    if request.method == 'GET':
+        return render_template("main_page.html", entries=Entry.query.all())
 
-#    comment = Comment(content=request.form["contents"])
-#    db.session.add(comment)
-#    db.session.commit()
-#    return redirect(url_for('index'))
+    s = request.form['searchstring']
+    return render_template("main_page.html", entries=Entry.query.filter(Entry.topic.like('%'+s+'%') | Entry.outline.like('%'+s+'%')).all())
 
 @app.route('/new',methods=['GET','POST'])
 @login_required
