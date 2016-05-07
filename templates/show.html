@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container-fluid">
+        <h1>
+            {{entry.topic}}
+            {% if g.user.is_authenticated%}
+                <small><a href="/edit?id={{entry.id}}">Edit</a></small>
+            {% endif %}
+        </h1>
+
+        {{formatted_outline|safe}}
+
+        <hr/>
+        <em>Last Updated: {{entry.timestamp}}</em>
+    </div>
+{% endblock %}

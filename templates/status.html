@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container-fluid">
+        <p>
+            Author: Cameron Dykstra<br/>
+            ID: 09091068
+        </p>
+        <h3>Notes</h3>
+        <ul>
+            <li>
+                All pages should have 100% valid HTML.
+                The CSS validation will have errors, but they are all from bootstrap.min.css, and I believe they are due to bootstrap's support for older browsers.
+            </li>
+            <li>
+                Links to check validation are at the bottom of the page.
+            </li>
+            <li>
+                The home page has the list view as well as a find box and links for adding/editing/deleting/showing as specified.
+            </li>
+            <li>
+                When displayed with "show" the notebook entries will be formatted using the markup language specified.
+            </li>
+            <li>
+                Trying to perform an action that requires login will redirect you to the login screen with a message, if you are not logged in (Use logout button to test).
+            </li>
+        </ul>
+    </div>
+{% endblock %}
