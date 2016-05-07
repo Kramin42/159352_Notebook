@@ -5,6 +5,9 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from flask.ext.login import LoginManager
 from flask.ext.login import login_user , logout_user , current_user , login_required
+import re
+import cgi
+
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.secret_key = "super secret key"
@@ -84,6 +87,47 @@ def index():
 
     s = request.form['searchstring']
     return render_template("main_page.html", entries=Entry.query.filter(Entry.topic.like('%'+s+'%') | Entry.outline.like('%'+s+'%')).all())
+
+@app.route('/show')
+def show():
+    entry = Entry.query.filter_by(id=request.args.get('id')).first()
+    outline = cgi.escape(entry.outline);
+    print(outline)
+
+    # break into alternating non-fixed and fixed parts
+    split_outline = outline.split('#+BEGIN_FIXED')
+    non_fixed = []
+    fixed = []
+    first=True
+    for piece in split_outline:
+        if first:
+            first=False
+            non_fixed.append(piece)
+            continue
+        split_piece = piece.split('#+END_FIXED')
+        fixed.append(split_piece[0])
+        if len(split_piece)>1:
+            non_fixed.append('#+END_FIXED'.join(split_piece[1:]))
+        else:
+            non_fixed.append('')
+
+    for i, piece in enumerate(non_fixed):
+
+        piece = re.sub('(\n|^)\\s*\\*([^\n*]+)', '<h2>\\2</h2>', piece)
+        piece = re.sub('(\n|^)\\s*\\*\\*([^\n*]+)', '<h3>\\2</h3>', piece)
+        piece = re.sub('(\n|^)\\s*[–-](.*)', '<li>\\2</li>', piece)
+        piece = re.sub('\\[\\[(.*)\\]\\]', '<a href="\\1">\\1</a>', piece)
+        piece = re.sub('\n\s*\n', '\n<p>', piece) # double new line becomes new paragraph
+        non_fixed[i] = piece
+
+    outline = ""
+    for i in range(len(non_fixed)):
+        outline+= non_fixed[i]
+        if i<len(fixed):
+            outline+='<div class="container-fluid"><pre>'+fixed[i]+'</pre></div>'
+
+    #outline = re.sub('#\\+BEGIN_FIXED((\n|.)*)#\\+END_FIXED', '<div class="container-fluid"><pre>\\2</pre></div>', outline)
+    return render_template("show.html", entry=entry, formatted_outline=outline)
 
 @app.route('/new',methods=['GET','POST'])
 @login_required
