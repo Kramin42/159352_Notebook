@@ -1,3 +1,4 @@
+<!DOCTYPE HTML>
 <html>
     <head>
         <meta charset="utf-8">
@@ -27,7 +28,7 @@
                 </div>
                 <ul class="nav navbar-nav">
                     <li {% if request.path == '/' %}class="active"{% endif %}><a href="/">Home</a></li>
-                    <li {% if request.path == '/about' %}class="active"{% endif %}><a href="/about">About</a></li>
+                    <li {% if request.path == '/status' %}class="active"{% endif %}><a href="/status">Status</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if g.user.is_authenticated%}
@@ -50,5 +51,8 @@
 
         {% block content %}{% endblock %}
 
+        <hr/>
+        <a href="https://validator.w3.org/nu/?doc={{ request.url }}"><em>Validate This Page's HTML</em></a>
+        <a href="http://jigsaw.w3.org/css-validator/validator?uri={{ request.url }}"><em>Validate This Page's CSS</em></a>
     </div></body>
 </html>

@@ -112,12 +112,12 @@ def show():
             non_fixed.append('')
 
     for i, piece in enumerate(non_fixed):
-
+        piece = re.sub('(\n|^)\\s*[–-](.*)', '<li>\\2</li>', piece)
+        piece = re.sub('((\\s*<li>[^<>]*<\\/li>)+)', '<ul>\\1</ul>', piece)# surround groups of <li></li> with <ul></ul>
         piece = re.sub('(\n|^)\\s*\\*([^\n*]+)', '<h2>\\2</h2>', piece)
         piece = re.sub('(\n|^)\\s*\\*\\*([^\n*]+)', '<h3>\\2</h3>', piece)
-        piece = re.sub('(\n|^)\\s*[–-](.*)', '<li>\\2</li>', piece)
         piece = re.sub('\\[\\[(.*)\\]\\]', '<a href="\\1">\\1</a>', piece)
-        piece = re.sub('\n\s*\n', '\n<p>', piece) # double new line becomes new paragraph
+        piece = re.sub('\n\s*\n', '<br/>\n<br/>\n', piece) # double new line becomes new paragraph
         non_fixed[i] = piece
 
     outline = ""
@@ -192,9 +192,9 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/about')
+@app.route('/status')
 def about():
-    return render_template('about.html')
+    return render_template('status.html')
 
 if __name__ == '__main__':
     db.create_all()
