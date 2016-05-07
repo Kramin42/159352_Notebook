@@ -23,6 +23,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 
 @login_manager.user_loader
 def load_user(id):
@@ -76,7 +77,7 @@ class User(db.Model):
 def before_request():
     g.user = current_user
 
-@app.route("/")
+@app.route('/',methods=['GET','POST'])
 def index():
     return render_template("main_page.html", entries=Entry.query.all())
 
@@ -94,7 +95,7 @@ def new():
     entry = Entry(request.form['topic'], request.form['outline'])
     db.session.add(entry)
     db.session.commit()
-    flash('Added: '+entry.topic)
+    flash('Added: '+entry.topic, 'success')
     return redirect(url_for('index'))
 
 @app.route('/edit',methods=['GET','POST'])
@@ -106,7 +107,7 @@ def edit():
     entry.topic = request.form['topic']
     entry.outline = request.form['outline']
     db.session.commit()
-    flash('Updated: '+entry.topic)
+    flash('Updated: '+entry.topic, 'success')
     return redirect(url_for('index'))
 
 @app.route('/delete')
@@ -115,7 +116,7 @@ def delete():
     entry = Entry.query.filter_by(id=request.args.get('id')).first()
     db.session.delete(entry)
     db.session.commit()
-    flash('Deleted: '+entry.topic)
+    flash('Deleted: '+entry.topic, 'success')
     return redirect(url_for('index'))
 
 # disabled
@@ -137,16 +138,20 @@ def login():
     password = request.form['password']
     registered_user = User.query.filter_by(username=username,password=password).first()
     if registered_user is None:
-        flash('Username or Password is invalid' , 'error')
+        flash('Username or Password is invalid' , 'danger')
         return redirect(url_for('login'))
     login_user(registered_user)
-    flash('Logged in successfully')
+    flash('Logged in successfully', 'success')
     return redirect(request.args.get('next') or url_for('index'))
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 if __name__ == '__main__':
     db.create_all()
