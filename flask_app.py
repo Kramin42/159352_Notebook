@@ -196,5 +196,13 @@ def logout():
 def about():
     return render_template('status.html')
 
+
+# this code would normally not be here, but it is just to set up the db for the marker:
 if __name__ == '__main__':
     db.create_all()
+    f = User.query.first()
+    if f is None:
+        usr = User('admin','admin')
+        db.session.add(usr)
+        db.session.commit()
+
